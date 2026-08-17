@@ -4,7 +4,7 @@ import logging
 from datetime import time
 from zoneinfo import ZoneInfo
 from telegram import Update
-from telegram.ext import Application, CommandHandler, MessageHandler, filters, Defaults
+from telegram.ext import Application, CommandHandler, MessageHandler, filters
 
 from ai import GeminiAssistant
 from calendar_service import CalendarService
@@ -24,9 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 def build_application(settings: Settings) -> Application:
-    application = Application.builder().token(settings.telegram_token).defaults(
-        Defaults(tzinfo=ZoneInfo(settings.timezone))
-    ).build()
+    application = Application.builder().token(settings.telegram_token).build()
     application.bot_data["settings"] = settings
     application.bot_data["db"] = Database(settings.database_path)
     application.bot_data["calendar"] = CalendarService(settings)

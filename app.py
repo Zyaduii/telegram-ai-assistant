@@ -3,8 +3,8 @@
 import logging
 from datetime import time
 from zoneinfo import ZoneInfo
-from telegram import Update, Defaults
-from telegram.ext import Application, CommandHandler, MessageHandler, filters
+from telegram import Update
+from telegram.ext import Application, CommandHandler, MessageHandler, filters, Defaults
 
 from ai import GeminiAssistant
 from calendar_service import CalendarService

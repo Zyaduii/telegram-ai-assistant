@@ -1,13 +1,12 @@
 """عميل Gemini لتوليد الردود العربية عند الحاجة."""
 
-from google import genai
-from google.genai import types
+import google.generativeai as genai
 
 
 class GeminiAssistant:
     def __init__(self, settings):
-        self.client = genai.Client(api_key=settings.gemini_api_key)
-        self.model = settings.gemini_model
+        genai.configure(api_key=settings.gemini_api_key)
+        self.model = genai.GenerativeModel(settings.gemini_model)
 
     def reply(self, message: str, memories: str = "", calendar_context: str = "") -> str:
         prompt = f"""
@@ -24,9 +23,8 @@ class GeminiAssistant:
 رسالة المستخدم:
 {message}
 """
-        response = self.client.models.generate_content(
-            model=self.model,
-            contents=prompt,
-            config=types.GenerateContentConfig(temperature=0.3, max_output_tokens=700),
+        response = self.model.generate_content(
+            prompt,
+            generation_config=genai.types.GenerationConfig(temperature=0.3, max_output_tokens=700),
         )
         return (response.text or "عذراً، لم أستطع تكوين رد الآن.").strip()

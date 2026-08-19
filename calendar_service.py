@@ -16,7 +16,12 @@ SCOPES = ["https://www.googleapis.com/auth/calendar"]
 class CalendarService:
     def __init__(self, settings):
         self.settings = settings
-        self.service = self._build_service()
+        self.service = None
+        try:
+            self.service = self._build_service()
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).warning(f"Google Calendar غير متاح: {e}")
 
     def _build_service(self):
         creds = None
@@ -55,6 +60,8 @@ class CalendarService:
         return datetime.fromisoformat(raw.replace("Z", "+00:00"))
 
     def upcoming(self, hours: int = 168, limit: int = 20):
+        if not self.service:
+            return []
         now = datetime.now().astimezone()
         result = self.service.events().list(
             calendarId=self.settings.calendar_id,
@@ -67,6 +74,8 @@ class CalendarService:
         return result.get("items", [])
 
     def create_event(self, summary: str, start: datetime, end: datetime, description: str = ""):
+        if not self.service:
+            return None
         body = {
             "summary": summary,
             "description": description,
@@ -76,12 +85,18 @@ class CalendarService:
         return self.service.events().insert(calendarId=self.settings.calendar_id, body=body).execute()
 
     def delete_event(self, event_id: str):
+        if not self.service:
+            return
         self.service.events().delete(calendarId=self.settings.calendar_id, eventId=event_id).execute()
 
     def find_event(self, event_id: str):
+        if not self.service:
+            return None
         return self.service.events().get(calendarId=self.settings.calendar_id, eventId=event_id).execute()
 
     def events_starting_between(self, start: datetime, end: datetime):
+        if not self.service:
+            return []
         result = self.service.events().list(
             calendarId=self.settings.calendar_id,
             timeMin=start.isoformat(),

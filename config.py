@@ -36,7 +36,7 @@ class Settings:
         return cls(
             telegram_token=_required("TELEGRAM_BOT_TOKEN"),
             gemini_api_key=_required("GEMINI_API_KEY"),
-            gemini_model=os.getenv("GEMINI_MODEL", "gemini-2.0-flash"),
+            gemini_model=os.getenv("GEMINI_MODEL", "gemini-3.6-flash"),
             database_path=os.getenv("DATABASE_PATH", "data/assistant.sqlite3"),
             timezone=os.getenv("TIMEZONE", "Asia/Riyadh"),
             daily_summary_time=os.getenv("DAILY_SUMMARY_TIME", "08:00"),
